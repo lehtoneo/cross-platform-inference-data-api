@@ -4,18 +4,18 @@ const imageUtil = {
   async getRawImageBuffer(path: string, type: 'uint8' | 'float32') {
     const image = sharp(path);
     const uint8Buffer = await image.raw().toBuffer();
-
     switch (type) {
       case 'uint8':
         return uint8Buffer;
       case 'float32':
         // Convert to Float32Array
-        const float32Data = new Float32Array(uint8Buffer.length);
-        for (let i = 0; i < uint8Buffer.length; i++) {
-          float32Data[i] = uint8Buffer[i] / 255.0; // Normalize the pixel values
-        }
-        // create buffer from float32Data
-        return Buffer.from(float32Data.buffer);
+        const float32Array = new Float32Array(
+          uint8Buffer.buffer,
+          uint8Buffer.byteOffset,
+          uint8Buffer.byteLength / Float32Array.BYTES_PER_ELEMENT
+        );
+
+        return Buffer.from(float32Array.buffer);
       default:
         throw new Error('Invalid type');
     }

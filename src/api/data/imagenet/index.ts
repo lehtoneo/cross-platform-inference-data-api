@@ -30,6 +30,7 @@ imageNetRouter.get('/', async (req, res) => {
     }
 
     let images: {
+      id: string;
       buffer: Buffer;
       rawImageBuffer: Buffer;
       base64Image?: string;
@@ -46,6 +47,7 @@ imageNetRouter.get('/', async (req, res) => {
       );
       const buffer = await imageUtil.getImageBuffer(imagePath);
       images.push({
+        id: imagePath,
         rawImageBuffer,
         buffer: buffer
       });
