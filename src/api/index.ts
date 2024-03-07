@@ -1,5 +1,5 @@
 import express from 'express';
-import dataRouter from './data';
+import dataRouter from './data-router';
 import exp from 'constants';
 
 const apiRouter = express.Router();

@@ -1,7 +1,7 @@
 import sharp from 'sharp';
 
 const imageUtil = {
-  async getRawImageBuffer(path: string, type: 'uint8' | 'float32') {
+  async getRawImageBuffer(path: string, type: 'uint8' | 'float32' | 'int32') {
     const image = sharp(path);
     const uint8Buffer = await image.raw().toBuffer();
     switch (type) {
@@ -16,6 +16,15 @@ const imageUtil = {
         );
 
         return Buffer.from(float32Array.buffer);
+      case 'int32':
+        // Convert to Uint32Array
+        const int32Array = new Int32Array(
+          uint8Buffer.buffer,
+          uint8Buffer.byteOffset,
+          uint8Buffer.byteLength / Uint32Array.BYTES_PER_ELEMENT
+        );
+
+        return Buffer.from(int32Array.buffer);
       default:
         throw new Error('Invalid type');
     }
