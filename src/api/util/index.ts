@@ -1,11 +1,10 @@
 import { z } from 'zod';
-import imageUtil from '../../../lib/util/images';
+import imageUtil from '../../lib/util/images';
 
 export const FetchImagesQuerySchema = z.object({
   // coerce so that it will convert string to number
   amount: z.coerce.number().int(),
-  skip: z.coerce.number().int(),
-  type: z.enum(['uint8', 'float32', 'int32'])
+  skip: z.coerce.number().int()
 });
 
 export type FetchImagesQuery = z.infer<typeof FetchImagesQuerySchema>;
@@ -29,10 +28,7 @@ export const getImagesAsync = async (opts: {
     const leadingZeros = curr < 10 ? '00' : curr < 100 ? '0' : '';
     const imagePath = `${startPath}${leadingZeros}${curr}.${extension}`;
 
-    const rawImageBuffer = await imageUtil.getRawImageBuffer(
-      imagePath,
-      query.type
-    );
+    const rawImageBuffer = await imageUtil.getRawImageBuffer(imagePath);
     const buffer = await imageUtil.getImageBuffer(imagePath);
     images.push({
       id: imagePath,

@@ -1,33 +1,11 @@
 import sharp from 'sharp';
 
 const imageUtil = {
-  async getRawImageBuffer(path: string, type: 'uint8' | 'float32' | 'int32') {
+  async getRawImageBuffer(path: string) {
     const image = sharp(path);
     const uint8Buffer = await image.raw().toBuffer();
-    switch (type) {
-      case 'uint8':
-        return uint8Buffer;
-      case 'float32':
-        // Convert to Float32Array
-        const float32Array = new Float32Array(
-          uint8Buffer.buffer,
-          uint8Buffer.byteOffset,
-          uint8Buffer.byteLength / Float32Array.BYTES_PER_ELEMENT
-        );
 
-        return Buffer.from(float32Array.buffer);
-      case 'int32':
-        // Convert to Uint32Array
-        const int32Array = new Int32Array(
-          uint8Buffer.buffer,
-          uint8Buffer.byteOffset,
-          uint8Buffer.byteLength / Uint32Array.BYTES_PER_ELEMENT
-        );
-
-        return Buffer.from(int32Array.buffer);
-      default:
-        throw new Error('Invalid type');
-    }
+    return uint8Buffer;
   },
   async getImageBuffer(path: string) {
     const image = sharp(path);
