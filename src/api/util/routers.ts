@@ -9,7 +9,6 @@ const createImageRouter = (opts: { startPath: string; extension: string }) => {
   const router = express.Router();
   router.get('/', async (req, res) => {
     try {
-      console.log({ query: req.query });
       const query: FetchImagesQuery = FetchImagesQuerySchema.parse(req.query);
 
       const images = await getImagesAsync({
