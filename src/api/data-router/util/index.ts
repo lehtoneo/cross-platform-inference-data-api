@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import imageUtil from '../../lib/util/images';
+import imageUtil from '../../../lib/util/images';
 
 export const FetchImagesQuerySchema = z.object({
   // coerce so that it will convert string to number
