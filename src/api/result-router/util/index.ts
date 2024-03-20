@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const SendResultsBodySchema = z.object({
-  // coerce so that it will convert string to number
+  resultsId: z.string(),
   platform: z.string(),
   frameWork: z.string(),
   precision: z.string(),

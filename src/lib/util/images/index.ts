@@ -3,6 +3,7 @@ import sharp from 'sharp';
 const imageUtil = {
   async getRawImageBuffer(path: string) {
     const image = sharp(path);
+    // does this lose information?
     const uint8Buffer = await image.raw().toBuffer();
 
     return uint8Buffer;

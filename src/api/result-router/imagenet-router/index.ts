@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { SendResultsBodySchema } from '../util';
 import { z } from 'zod';
+import { imageNetUtil } from '../util/imagenet';
 
 const imageNetRouter = Router();
 
@@ -13,8 +14,19 @@ const ImageNetResultBodySchema = SendResultsBodySchema.and(
 imageNetRouter.post('/', (_req, res) => {
   try {
     const r = ImageNetResultBodySchema.parse(_req.body);
-    console.log({ r });
-    res.send('ok');
+    const correct = imageNetUtil.validateImageNetResult(
+      {
+        predicted: r.results,
+        dataSetIndex: r.inputIndex
+      },
+      {
+        topX: 1
+      }
+    );
+    console.log({ correct });
+    res.send({
+      correct
+    });
   } catch (e) {
     console.log({ e });
     res.status(400).send(e.errors);
