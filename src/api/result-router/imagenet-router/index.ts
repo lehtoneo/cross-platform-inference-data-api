@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { SendResultsBodySchema } from '../util';
 import { z } from 'zod';
-import { imageNetUtil } from '../util/imagenet';
+import { imageNetUtil } from '../../../lib/results/imagenet';
 
 const imageNetRouter = Router();
 
