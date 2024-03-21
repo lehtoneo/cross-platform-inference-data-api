@@ -1,5 +1,5 @@
 import express from 'express';
-import { imageNetRouter } from './imagenet-router';
+import { imageNetRouter } from './mobilenet-router';
 import { ssdMobileNetRouter } from './ssd_mobilenet-router';
 import { deeplabv3Router } from './deeplabv3-router';
 

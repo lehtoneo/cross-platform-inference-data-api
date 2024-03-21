@@ -12,3 +12,20 @@ export const getTopXIndicesInOrder = (arr: number[], x: number) => {
 
   return topIndices;
 };
+
+/**
+ * - Get the amount of each number in an array
+ * - Example: [1, 1, 2, 3, 3, 3] => {1: 2, 2: 1, 3: 3}
+ * @param arr - Array of numbers
+ * @returns - Object with the amount of each number in the array
+ */
+export const getAmountMap = (arr: number[]): Record<number, number> => {
+  return arr.reduce((acc, curr) => {
+    if (typeof acc[curr] === 'undefined') {
+      acc[curr] = 1;
+    } else {
+      acc[curr] += 1;
+    }
+    return acc;
+  }, {});
+};

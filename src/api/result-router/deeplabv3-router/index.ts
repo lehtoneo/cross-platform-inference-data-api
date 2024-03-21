@@ -1,12 +1,12 @@
+import { SendResultsBodySchema } from '@/lib/results/common';
 import express from 'express';
-import { SendResultsBodySchema } from '../util';
 import { z } from 'zod';
 
 const deeplabv3Router = express.Router();
 
 const SsdMobileNetResultBodySchema = SendResultsBodySchema.and(
   z.object({
-    results: z.array(z.number()).length(512 * 512)
+    output: z.array(z.number()).length(512 * 512)
   })
 );
 

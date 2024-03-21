@@ -1,26 +1,27 @@
+import { getAmountMap } from '@/lib/util/common';
+import { SendResultsBodySchema } from '../common';
+import { z } from 'zod';
+
+const numberArray = z.array(z.number());
+
+export const SsdMobileNetResultBodySchema = SendResultsBodySchema.and(
+  z.object({
+    output: z.tuple([numberArray, numberArray, numberArray, numberArray])
+  })
+);
+
+type SsdMobileNetResultBody = z.infer<typeof SsdMobileNetResultBodySchema>;
+
 var t: CocoGroundTruth[] = require('./array_grouped_coco_val_tiny.json');
 
-const getAmountMap = (arr: number[]): Record<number, number> => {
-  return arr.reduce((acc, curr) => {
-    if (typeof acc[curr] === 'undefined') {
-      acc[curr] = 1;
-    } else {
-      acc[curr] += 1;
-    }
-    return acc;
-  }, {});
-};
-
-const validateSSDMobileNet = (input: {
-  result: [number[], number[], number[], number[]];
-  index: number;
-}) => {
-  const groundTruth = t[input.index];
+const validateSSDMobileNet = (body: SsdMobileNetResultBody) => {
+  const o = body.output;
+  const groundTruth = t[body.inputIndex];
   const groundTruthObjects = groundTruth.objects.map((o) => o.class_id);
-  const boxes = input.result[0];
-  const classes = input.result[1].map((c) => c + 1);
-  const scores = input.result[2];
-  const numDetections = input.result[3];
+  const boxes = body.output[0];
+  const classes = body.output[1].map((c) => c + 1);
+  const scores = body.output[2];
+  const numDetections = body.output[3];
 
   let treshHoldDetections: number[] = [];
 
