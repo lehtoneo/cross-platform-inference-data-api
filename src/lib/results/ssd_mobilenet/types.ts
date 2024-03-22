@@ -1,4 +1,4 @@
-type BoundigBox = {
+export type BoundingBox = {
   normalized_top: number;
   normalized_bottom: number;
   normalized_left: number;
@@ -6,10 +6,10 @@ type BoundigBox = {
 };
 type Obj = {
   class_id: number;
-  bounding_box: BoundigBox;
+  bounding_box: BoundingBox;
 };
 
-type CocoGroundTruth = {
+export type CocoGroundTruth = {
   objects: Obj[];
   image_name: string;
   image_id: number;

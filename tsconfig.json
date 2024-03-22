@@ -21,6 +21,6 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true
   },
-  "include": ["./src/**/*"],
+  "include": ["./src/**/*", "imagenet_ground_truth.ts"],
   "exclude": ["node_modules", "build", "node_modules/**/*", "build/**/*"]
 }

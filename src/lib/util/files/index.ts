@@ -14,6 +14,14 @@ const createFileIfNotExists = (path: string, content: string) => {
   return false;
 };
 
+const createFolderIfNotExists = (path: string) => {
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path, { recursive: true });
+    return true;
+  }
+  return false;
+};
+
 const jsonUtils = {
   pushToJsonFileArray: (filePath: string, data: any) => {
     const currentData = require(filePath);
@@ -24,6 +32,7 @@ const jsonUtils = {
 
 const fileUtils = {
   createFileIfNotExists,
+  createFolderIfNotExists,
   json: jsonUtils
 };
 

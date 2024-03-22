@@ -1,6 +1,5 @@
 import express from 'express';
-import { z } from 'zod';
-import { SendResultsBodySchema } from '@/lib/results/common';
+import { resultUtils } from '@/lib/results/common';
 import {
   SsdMobileNetResultBodySchema,
   ssdMobileNetUtil
@@ -8,9 +7,10 @@ import {
 
 const ssdMobileNetRouter = express.Router();
 
-ssdMobileNetRouter.post('/', (_req, res) => {
+ssdMobileNetRouter.post('/', async (_req, res) => {
   const body = SsdMobileNetResultBodySchema.parse(_req.body);
   const validationResult = ssdMobileNetUtil.validateSSDMobileNet(body);
+  resultUtils.writeResultToFile(body);
 
   res.send({
     correct: validationResult

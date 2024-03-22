@@ -9,13 +9,13 @@ const mobileNetRouter = Router();
 
 mobileNetRouter.post('/', (_req, res) => {
   try {
-    const r = MobileNetResultBodySchema.parse(_req.body);
-    const correct = mobileNetUtil.validateMobileNetResult(r, {
+    const body = MobileNetResultBodySchema.parse(_req.body);
+    const correct = mobileNetUtil.validateMobileNetResult(body, {
       topX: 1
     });
 
     try {
-      resultUtils.writeResultToFile(r, 'mobilenet');
+      resultUtils.writeResultToFile(body);
     } catch (e) {
       console.log({ e });
     }
