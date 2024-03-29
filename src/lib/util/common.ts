@@ -29,3 +29,10 @@ export const getAmountMap = (arr: number[]): Record<number, number> => {
     return acc;
   }, {});
 };
+
+/**
+ * - Replace all occurrences of a string in a string
+ */
+export const replaceAll = (value: string, search: string, replace: string) => {
+  return value.split(search).join(replace);
+};

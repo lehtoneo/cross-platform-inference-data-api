@@ -9,10 +9,14 @@ const mobileNetRouter = Router();
 
 mobileNetRouter.post('/', (_req, res) => {
   try {
+    console.log('??');
     const body = MobileNetResultBodySchema.parse(_req.body);
+    console.log({ body });
     const correct = mobileNetUtil.validateMobileNetResult(body, {
       topX: 1
     });
+
+    console.log({ correct });
 
     try {
       resultUtils.writeResultToFile(body);
@@ -29,4 +33,4 @@ mobileNetRouter.post('/', (_req, res) => {
   }
 });
 
-export { mobileNetRouter as imageNetRouter };
+export { mobileNetRouter };

@@ -2,9 +2,23 @@ import { z } from 'zod';
 import { SendResultsBodySchema } from '../common';
 import fs from 'fs';
 
+const deeplabArray = z.array(z.number()).length(512 * 512);
+
+const Array512x512Schema = z
+  .array(z.array(z.number()))
+  .refine(
+    (array) =>
+      array.length === 512 &&
+      array.every((innerArray) => innerArray.length === 512),
+    {
+      message: 'Array must be of size 512x512'
+    }
+  );
+
 const DeeplabV3ResultBodySchema = SendResultsBodySchema.and(
+  // Accept both 1D and 2D arrays
   z.object({
-    output: z.array(z.number()).length(512 * 512)
+    output: z.union([deeplabArray, Array512x512Schema])
   })
 );
 
@@ -22,7 +36,10 @@ const validateDeeplabV3Result = (input: DeeplabV3ResultBody) => {
 
     const t = fs.readFileSync(path);
     const groundTruth = Array.from(t);
-    const preds = body.output;
+    const preds =
+      body.output.length === 512 * 512
+        ? (body.output as number[])
+        : body.output.flat();
 
     const accuracy = calculateAccuracy(preds, groundTruth);
     const miou = calculateMIoU(preds, groundTruth);

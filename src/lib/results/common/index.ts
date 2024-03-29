@@ -1,3 +1,4 @@
+import { replaceAll } from '@/lib/util/common';
 import fileUtils from '@/lib/util/files';
 import { z } from 'zod';
 
@@ -14,7 +15,15 @@ const SendResultsMetaData = z.object({
     'ssd_mobilenet',
     'deeplabv3'
   ]),
-  delegate: z.enum(['cpu', 'nnapi', 'metal', 'core-ml', 'webgl'])
+  delegate: z.enum([
+    'cpu',
+    'nnapi',
+    'metal',
+    'core_ml',
+    'webgl',
+    'opengl',
+    'xxnpack'
+  ])
 });
 
 type SendResultsMetaData = z.infer<typeof SendResultsMetaData>;
@@ -22,18 +31,18 @@ type SendResultsMetaData = z.infer<typeof SendResultsMetaData>;
 export const SendResultsBodySchema = SendResultsMetaData.and(
   z.object({
     inferenceTimeMs: z.number().int(),
-    inputIndex: z.number().int()
+    inputIndex: z.number().int(),
+    output: z.any()
   })
 );
 
-type SendResultsBody = z.infer<typeof SendResultsBodySchema>;
+export type SendResultsBody = z.infer<typeof SendResultsBodySchema>;
 
 const writeResultToFile = (input: SendResultsBody) => {
-  console.log('NOT WRITING TO FILE, MOCKING IT FOR NOW...');
-  return;
-  const deviceNameFormatted = input.deviceModelName.replace(' ', '_');
+  const deviceNameFormatted = replaceAll(input.deviceModelName, ' ', '_');
 
-  const folder = `${process.cwd()}/results/${input.frameWork}/${deviceNameFormatted}/${input.model}_${input.precision}/${input.library}/${input.delegate}`;
+  const delegate = input.delegate === 'webgl' ? 'opengl' : input.delegate;
+  const folder = `${process.cwd()}/results/${input.frameWork}/${deviceNameFormatted}/${input.model}_${input.precision}/${input.library}/${delegate}`;
   fileUtils.createFolderIfNotExists(folder);
 
   const filePath = `${folder}/${input.resultsId}.json`;

@@ -18,7 +18,8 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=dev TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true nodemon -e ts,js --exec ts-node -r tsconfig-paths/register src/index.ts",
-    "ts:check": "tsc --noEmit"
+    "ts:check": "tsc --noEmit",
+    "read-results": "ts-node -r tsconfig-paths/register ./src/scripts/read-results.ts"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
