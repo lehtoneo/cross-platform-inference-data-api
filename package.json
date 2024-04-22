@@ -12,12 +12,13 @@
     ]
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.2",
     "sharp": "^0.33.2",
     "zod": "^3.22.4"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true nodemon -e ts,js --exec ts-node -r tsconfig-paths/register src/index.ts",
+    "dev": "cross-env NODE_ENV=dev NODE_OPTIONS=--max-old-space-size=8192 TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true nodemon -e ts,js --exec ts-node -r tsconfig-paths/register src/index.ts",
     "ts:check": "tsc --noEmit",
     "read-results": "ts-node -r tsconfig-paths/register ./src/scripts/read-results.ts"
   },

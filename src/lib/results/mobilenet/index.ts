@@ -24,6 +24,8 @@ const validateMobileNetResult = (
   const indexType = input.model === 'mobilenet_edgetpu' ? 1 : 0;
   const correctResult = imageNetGroundTruth[input.inputIndex] + indexType; // mobilenet_edgetpu has different indices
   console.log({ correctResult, topXIndices });
+  
+  
   const isCorrect = topXIndices.includes(correctResult);
   return isCorrect;
 };

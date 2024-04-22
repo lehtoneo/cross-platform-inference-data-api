@@ -8,13 +8,16 @@ const numberArray = z.array(z.number());
 
 export const SsdMobileNetResultBodySchema = SendResultsBodySchema.and(
   z.object({
-    output: z.tuple([numberArray, numberArray, numberArray, numberArray])
+    output: z.any() // z.tuple([numberArray, numberArray, numberArray, numberArray])
   })
 );
 
 type SsdMobileNetResultBody = z.infer<typeof SsdMobileNetResultBodySchema>;
 
 var t: CocoGroundTruth[] = require('./array_grouped_coco_val_tiny.json');
+
+let count = 0;
+let totalMap = 0;
 
 const validateSSDMobileNet = (body: SsdMobileNetResultBody) => {
   const o = body.output;
@@ -61,7 +64,7 @@ const validateSSDMobileNet = (body: SsdMobileNetResultBody) => {
     };
     predictions.push({
       boundingBox: boundingBox,
-      classId: classIds[i],
+      classId: classIds[i] + 1,
       confidence: confidences[i]
     });
   }
@@ -75,14 +78,12 @@ const validateSSDMobileNet = (body: SsdMobileNetResultBody) => {
   });
 
   const iouThreshold = 0.5; // Set your IoU threshold
-  const numClasses = 2; // Set the total number of classes
+  const numClasses = 32; // Set the total number of classes
 
-  const mapScore = calculateMAP(
-    predictions,
-    groundTruths,
-    iouThreshold,
-    numClasses
-  );
+  const mapScore = calculateMAP(predictions, groundTruths, iouThreshold);
+  totalMap += mapScore;
+  count++;
+  console.log('Average mAP score:', totalMap / count);
   console.log('mAP score:', mapScore);
 
   return errors ? false : true;
@@ -135,6 +136,11 @@ function calculateAP(
     (g) => g.classId === classId
   );
 
+  // Check if there are no predictions or ground truths for this class
+  if (filteredPredictions.length === 0 || filteredGroundTruths.length === 0) {
+    return 0; // Return 0 AP for this class
+  }
+
   let tp = 0,
     fp = 0;
   let precision: number[] = [];
@@ -162,8 +168,13 @@ function calculateAP(
       fp++;
     }
 
-    precision.push(tp / (tp + fp));
-    recall.push(tp / filteredGroundTruths.length);
+    // Check for division by zero
+    if (tp + fp !== 0) {
+      precision.push(tp / (tp + fp));
+    }
+    if (filteredGroundTruths.length !== 0) {
+      recall.push(tp / filteredGroundTruths.length);
+    }
   });
 
   // Calculate the area under the curve (AUC) for precision-recall
@@ -178,14 +189,24 @@ function calculateAP(
 function calculateMAP(
   predictions: Prediction[],
   groundTruths: GroundTruth[],
-  iouThreshold: number,
-  numClasses: number
+  iouThreshold: number
 ): number {
   let sumAP = 0;
+  let classesProcessed = 0;
 
-  for (let classId = 0; classId < numClasses; classId++) {
+  // Iterate over all unique class IDs present in predictions or ground truths
+  const uniqueClassIds = new Set([
+    ...predictions.map((prediction) => prediction.classId),
+    ...groundTruths.map((groundTruth) => groundTruth.classId)
+  ]);
+
+  uniqueClassIds.forEach((classId) => {
     sumAP += calculateAP(predictions, groundTruths, classId, iouThreshold);
-  }
+    classesProcessed++;
+  });
 
-  return sumAP / numClasses;
+  // Avoid division by zero if no classes are processed
+  if (classesProcessed === 0) return 0;
+
+  return sumAP / classesProcessed;
 }

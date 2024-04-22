@@ -44,13 +44,32 @@ async function readJSONFilesFromDirectory<T>(
   return results;
 }
 
+async function readJSONFileCountFromDirectory(
+  directory: string
+): Promise<number> {
+  const entries = await fs.readdirSync(directory);
+  let count = 0;
+  for (const entryName of entries) {
+    const entryPath = path.join(directory, entryName);
+    const entryStat = await fs.statSync(entryPath);
+
+    if (entryStat.isDirectory()) {
+      count += await readJSONFileCountFromDirectory(entryPath);
+    } else if (path.extname(entryName) === '.json') {
+      count++;
+    }
+  }
+  return count;
+}
+
 const jsonUtils = {
   pushToJsonFileArray: (filePath: string, data: any) => {
     const currentData = require(filePath);
     currentData.push(data);
     fs.writeFileSync(filePath, JSON.stringify(currentData));
   },
-  readJSONFilesFromDirectory
+  readJSONFilesFromDirectory,
+  readJSONFileCountFromDirectory
 };
 
 const fileUtils = {

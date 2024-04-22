@@ -3,7 +3,10 @@ import apiRouter from './api';
 import healthRouter from './health';
 import loggerMiddleware from './lib/middleware/logging';
 
+import cors from 'cors';
+
 const app = express();
+app.use(cors());
 
 app.use(loggerMiddleware);
 const port = 3000;
@@ -20,6 +23,8 @@ app.get('/', (_req, res) => {
 
 app.use('/health', healthRouter);
 app.use('/api', apiRouter);
+
+app.use(express.static('static'));
 
 const _app = app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
