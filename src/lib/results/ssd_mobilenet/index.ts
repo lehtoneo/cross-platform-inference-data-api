@@ -1,12 +1,12 @@
 import { getAmountMap } from '@/lib/util/common';
-import { SendResultsBodySchema } from '../common';
+import { SendSpeedResultsBodySchema } from '../common/speed';
 import { z } from 'zod';
 import sharp from 'sharp';
 import { BoundingBox, CocoGroundTruth } from './types';
 
 const numberArray = z.array(z.number());
 
-export const SsdMobileNetResultBodySchema = SendResultsBodySchema.and(
+export const SsdMobileNetResultBodySchema = SendSpeedResultsBodySchema.and(
   z.object({
     output: z.any() // z.tuple([numberArray, numberArray, numberArray, numberArray])
   })

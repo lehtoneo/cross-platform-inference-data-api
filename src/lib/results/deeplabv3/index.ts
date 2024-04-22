@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SendResultsBodySchema } from '../common';
+import { SendSpeedResultsBodySchema } from '../common/speed';
 import fs from 'fs';
 
 const deeplabArray = z.array(z.number());
@@ -15,7 +15,7 @@ const Array512x512Schema = z
     }
   );
 
-const DeeplabV3ResultBodySchema = SendResultsBodySchema.and(
+const DeeplabV3ResultBodySchema = SendSpeedResultsBodySchema.and(
   // Accept both 1D and 2D arrays
   z.object({
     output: z.union([deeplabArray, Array512x512Schema])
@@ -25,7 +25,7 @@ const DeeplabV3ResultBodySchema = SendResultsBodySchema.and(
 type DeeplabV3ResultBody = z.infer<typeof DeeplabV3ResultBodySchema>;
 
 const validateDeeplabV3Result = (input: DeeplabV3ResultBody) => {
-  return ;
+  return;
   const body = input;
   try {
     if (body.inputIndex === 0) {

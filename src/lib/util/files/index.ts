@@ -62,6 +62,10 @@ async function readJSONFileCountFromDirectory(
   return count;
 }
 
+async function writeToJSONFile<T>(filePath: string, data: T) {
+  fs.writeFileSync(filePath, JSON.stringify(data));
+}
+
 const jsonUtils = {
   pushToJsonFileArray: (filePath: string, data: any) => {
     const currentData = require(filePath);
@@ -69,7 +73,8 @@ const jsonUtils = {
     fs.writeFileSync(filePath, JSON.stringify(currentData));
   },
   readJSONFilesFromDirectory,
-  readJSONFileCountFromDirectory
+  readJSONFileCountFromDirectory,
+  writeToJSONFile
 };
 
 const fileUtils = {

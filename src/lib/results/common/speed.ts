@@ -1,8 +1,9 @@
 import { replaceAll } from '@/lib/util/common';
 import fileUtils from '@/lib/util/files';
 import { z } from 'zod';
+import { getResultPaths } from './util';
 
-export const SendResultsMetaData = z.object({
+export const SendResultsMetadata = z.object({
   resultsId: z.string(),
   platform: z.enum(['android', 'ios']),
   deviceModelName: z.string(),
@@ -27,7 +28,7 @@ export const SendResultsMetaData = z.object({
   ])
 });
 
-export const SendResultsBodySchema = SendResultsMetaData.and(
+export const SendSpeedResultsBodySchema = SendResultsMetadata.and(
   z.object({
     inferenceTimeMs: z.number(),
     inputIndex: z.number().int(),
@@ -35,18 +36,22 @@ export const SendResultsBodySchema = SendResultsMetaData.and(
   })
 );
 
-export type SendResultsBodySchemaType = typeof SendResultsBodySchema;
+export type SendSpeedResultsBodySchemaType = typeof SendSpeedResultsBodySchema;
 
-export type SendResultsBody = z.infer<typeof SendResultsBodySchema>;
+export type SendSpeedResultsBodyType = z.infer<
+  typeof SendSpeedResultsBodySchema
+>;
 
-export type SendResultsMetaData = z.infer<typeof SendResultsMetaData>;
+export type SendResultsMetadata = z.infer<typeof SendResultsMetadata>;
 
-const hasResults = async (input: SendResultsMetaData) => {
+const getPath = (input: SendResultsMetadata) => {
+  const paths = getResultPaths(input);
+  const folder = `${paths.start}/${paths.end}`;
+  return folder;
+};
+
+const hasResults = async (input: SendResultsMetadata) => {
   const folder = getPath(input);
-
-  if (input.deviceModelName.toLowerCase() === 'iphone13,1') {
-    return false;
-  }
 
   try {
     const files = await fileUtils.json.readJSONFileCountFromDirectory(folder);
@@ -57,8 +62,8 @@ const hasResults = async (input: SendResultsMetaData) => {
   }
 };
 
-const writeResultToFile = (
-  input: SendResultsBody,
+const writeSpeedResultsToFile = (
+  input: SendSpeedResultsBodyType,
   writeOutputToFile = true
 ) => {
   const folder = getPath(input);
@@ -75,14 +80,7 @@ const writeResultToFile = (
   fileUtils.json.pushToJsonFileArray(filePath, writedInput);
 };
 
-const getPath = (input: SendResultsMetaData) => {
-  const deviceNameFormatted = replaceAll(input.deviceModelName, ' ', '_');
-  const delegate = input.delegate === 'webgl' ? 'opengl' : input.delegate;
-
-  return `${process.cwd()}/results/${input.frameWork}/${deviceNameFormatted}/${input.model}_${input.precision}/${input.library}/${delegate}`;
-};
-
-export const resultUtils = {
-  writeResultToFile,
+export const speedResultUtils = {
+  writeSpeedResultsToFile,
   hasResults
 };

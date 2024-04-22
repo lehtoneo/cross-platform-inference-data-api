@@ -1,25 +1,27 @@
-import { SendResultsBody } from '@/lib/results/common';
+import { SendSpeedResultsBodyType } from '@/lib/results/common/speed';
 import fileUtils from '@/lib/util/files';
 
 const resultFolder = 'results';
 
-const calculateAvgInferenceTime = (results: SendResultsBody[]) => {
+const calculateAvgInferenceTime = (results: SendSpeedResultsBodyType[]) => {
   const total = results.reduce((acc, curr) => acc + curr.inferenceTimeMs, 0);
   return total / results.length;
 };
 
-const calculateHighestInferenceTime = (results: SendResultsBody[]) => {
+const calculateHighestInferenceTime = (results: SendSpeedResultsBodyType[]) => {
   return results.reduce((acc, curr) => Math.max(acc, curr.inferenceTimeMs), 0);
 };
 
-const calculateLowestInferenceTime = (results: SendResultsBody[]) => {
+const calculateLowestInferenceTime = (results: SendSpeedResultsBodyType[]) => {
   return results.reduce(
     (acc, curr) => Math.min(acc, curr.inferenceTimeMs),
     Infinity
   );
 };
 
-const calculate95PercentileInferenceTime = (results: SendResultsBody[]) => {
+const calculate95PercentileInferenceTime = (
+  results: SendSpeedResultsBodyType[]
+) => {
   const sorted = results.map((r) => r.inferenceTimeMs).sort((a, b) => a - b);
   const index = Math.floor(sorted.length * 0.95);
   return sorted[index];
@@ -27,7 +29,7 @@ const calculate95PercentileInferenceTime = (results: SendResultsBody[]) => {
 
 (async () => {
   const results = await fileUtils.json.readJSONFilesFromDirectory<
-    (SendResultsBody & { output: any })[]
+    (SendSpeedResultsBodyType & { output: any })[]
   >(`${process.cwd()}/${resultFolder}`);
 
   results.forEach((result) => {

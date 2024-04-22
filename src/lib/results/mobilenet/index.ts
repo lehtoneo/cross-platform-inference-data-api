@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { SendResultsBodySchema } from '../common';
+import { SendSpeedResultsBodySchema } from '../common/speed';
 import { getTopXIndicesInOrder } from '../../util/common';
 import { imageNetGroundTruth } from '../../../../imagenet_ground_truth';
 
-export const MobileNetResultBodySchema = SendResultsBodySchema.and(
+export const MobileNetResultBodySchema = SendSpeedResultsBodySchema.and(
   z.object({
     output: z.array(z.number())
   })
@@ -24,8 +24,7 @@ const validateMobileNetResult = (
   const indexType = input.model === 'mobilenet_edgetpu' ? 1 : 0;
   const correctResult = imageNetGroundTruth[input.inputIndex] + indexType; // mobilenet_edgetpu has different indices
   console.log({ correctResult, topXIndices });
-  
-  
+
   const isCorrect = topXIndices.includes(correctResult);
   return isCorrect;
 };

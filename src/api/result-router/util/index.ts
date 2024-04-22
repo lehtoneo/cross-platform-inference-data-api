@@ -1,9 +1,12 @@
-import { SendResultsBody, resultUtils } from '@/lib/results/common';
+import {
+  SendSpeedResultsBodyType,
+  speedResultUtils
+} from '@/lib/results/common/speed';
 import express from 'express';
 import { z } from 'zod';
 
 export const createResultRouter = (opts: {
-  schema: z.ZodType<SendResultsBody, any, any>;
+  schema: z.ZodType<SendSpeedResultsBodyType, any, any>;
   validate?: (body: any) => boolean;
   writeOutputToFile: boolean;
 }) => {
@@ -17,7 +20,7 @@ export const createResultRouter = (opts: {
       const body = opts.schema.parse(_req.body);
       const validationResult = opts.validate ? opts.validate(body) : true;
 
-      resultUtils.writeResultToFile(body, writeOutputToFile);
+      speedResultUtils.writeSpeedResultsToFile(body, writeOutputToFile);
 
       res.send({
         correct: validationResult
@@ -32,7 +35,7 @@ export const createResultRouter = (opts: {
     try {
       const body = multipleSchema.parse(_req.body);
 
-      body.forEach((b) => resultUtils.writeResultToFile(b));
+      body.forEach((b) => speedResultUtils.writeSpeedResultsToFile(b));
 
       res.send('Ok');
     } catch (e) {
