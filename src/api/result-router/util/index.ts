@@ -16,7 +16,6 @@ export const createResultRouter = (opts: {
     opts.writeOutputToFile === undefined ? true : opts.writeOutputToFile;
   router.post('/', async (_req, res) => {
     try {
-      console.log('??');
       const body = opts.schema.parse(_req.body);
       const validationResult = opts.validate ? opts.validate(body) : true;
 
